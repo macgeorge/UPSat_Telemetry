@@ -73,8 +73,8 @@ txttit13=uicontrol('Style','text', 'Position',[text1posa text1posb4 30 15],'Stri
 txttit14=uicontrol('Style','text', 'Position',[text1posa text1posb4-20 30 15],'String','Vbat: ');
 txttit15=uicontrol('Style','text', 'Position',[text1posa text1posb4-40 30 15],'String','I3.3V: ');
 txttit16=uicontrol('Style','text', 'Position',[text1posa text1posb4-60 30 15],'String','I5V: ');
-txttit17=uicontrol('Style','text', 'Position',[text1posa text1posb4-80 40 15],'String','Temp1: ');
-txttit18=uicontrol('Style','text', 'Position',[text1posa text1posb4-100 40 15],'String','Temp2: ');
+txttit17=uicontrol('Style','text', 'Position',[text1posa text1posb4-80 40 15],'String','Temp1:');
+txttit18=uicontrol('Style','text', 'Position',[text1posa text1posb4-100 40 15],'String','Temp2:');
 
 txtmes1=uicontrol('Style','text', 'Position',[text1posa+text12diff text1posb1 30 15],'String','0000');
 txtmes2=uicontrol('Style','text', 'Position',[text1posa+text12diff text1posb1-20 30 15],'String','0000');
@@ -92,8 +92,8 @@ txtmes13=uicontrol('Style','text', 'Position',[text1posa+text12diff text1posb4 3
 txtmes14=uicontrol('Style','text', 'Position',[text1posa+text12diff text1posb4-20 30 15],'String','0000');
 txtmes15=uicontrol('Style','text', 'Position',[text1posa+text12diff text1posb4-40 30 15],'String','0000');
 txtmes16=uicontrol('Style','text', 'Position',[text1posa+text12diff text1posb4-60 30 15],'String','0000');
-txtmes17=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb4-80 40 15],'String','-127');
-txtmes18=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb4-100 40 15],'String','-127');
+txtmes17=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb4-80 40 15],'String','-127', 'HorizontalAlignment', 'left');
+txtmes18=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb4-100 40 15],'String','-127', 'HorizontalAlignment', 'left');
 
 im=imread('UPSat_im.png');
 axes('position',[0.005 0.15 0.1 0.1])
