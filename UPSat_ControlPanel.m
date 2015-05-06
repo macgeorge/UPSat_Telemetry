@@ -6,6 +6,12 @@ stop=0;
 linestyle='-r.';
 subplotx=4;
 subploty=4;
+startSpot = 0;
+step = 1 ;
+startValue=0;
+endValue=10;
+zoom=1;
+pan=0;
 
 mes1=0;
 mes2=0;
@@ -23,15 +29,16 @@ mes13=0;
 mes14=0;
 mes15=0;
 mes16=0;
-%s = serial('/dev/tty.usbmodemfd121');
-%s=serial('/dev/tty.usbmodemfa131')
+data='';
 
+
+%%%%%%%SERIAL CONFIG%%%%%%%%%%%
+%s=serial('/dev/tty.usbmodemfa131','baudrate', 9600, 'databits', 8, 'stopbits', 1)
 %fopen(s);
-startSpot = 0;
-interv = 100 ; % considering 1000 samples
-step = 1 ; % lowering step has a number of cycles and then acquire more data
+%readasync(s);
 
-scrsz = get(groot,'ScreenSize');
+%scrsz = get(groot,'ScreenSize');
+scrsz=[1 1 1440 900];
 text1posa=1320;
 text1posb1=680;
 text1posb2=510;
@@ -39,7 +46,11 @@ text1posb3=340;
 text1posb4=190;
 text12diff=30;
 f=figure('Position',[1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/1], 'Name', 'UPSat EPS Telemetry', 'NumberTitle', 'off');
-btn=uicontrol('Style', 'pushbutton', 'String', 'Stop','Position', [20 20 50 20],'Callback', 'stop=1;'); 
+btnstop=uicontrol('Style', 'pushbutton', 'String', 'Stop','Position', [50 20 50 20],'Callback', 'stop=stop+1;'); 
+btnplus=uicontrol('Style', 'pushbutton', 'String', '+','Position', [50 50 20 20],'Callback', 'zoom=zoom*2;'); 
+btnminus=uicontrol('Style', 'pushbutton', 'String', '-','Position', [80 50 20 20],'Callback', 'zoom=zoom/2;'); 
+btnleft=uicontrol('Style', 'pushbutton', 'String', '<','Position', [50 80 20 20],'Callback', 'pan=pan+1;'); 
+btnright=uicontrol('Style', 'pushbutton', 'String', '>','Position', [80 80 20 20],'Callback', 'pan=pan-1;'); 
 
 txttit=uicontrol('Style','text', 'Position',[625 750 190 20],'String','EPS TELEMETRY','FontSize',20, 'FontWeight', 'Bold', 'ForegroundColor', 'red');
 
@@ -82,192 +93,222 @@ txtmes17=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb
 txtmes18=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb4-100 40 15],'String','-127');
 
 im=imread('UPSat_im.png');
-axes('position',[0.01 0.1 0.1 0.1])
+axes('position',[0.005 0.15 0.1 0.1])
 imshow(im);
 
-%while ( t <interv )
-while (stop<1)
-    %readasync(s);
-    %b=(fscanf(s));
-   data1=500+500*sin(t);
-   data2=100+100*sin(t);
-   data3=500+500*sin(t);
-   data4=100+100*sin(t);
-   data5=500+500*sin(t);
-   data6=100+100*sin(t);
-   data7=500+500*sin(t);
-   data8=100+100*sin(t);
-   data13=500+500*sin(t);
-   data14=100+100*sin(t);
-   data15=500+500*sin(t);
-   data16=100+100*sin(t);
-   data17=-100;
-   data18=-100;
+txtstring=uicontrol('Style','text', 'Position',[400 20 600 15],'string',data);
+txtstringtitle=uicontrol('Style','text', 'Position',[550 20 50 15],'string','raw data:');
+while (stop<3)
+if (stop<1)
+   %data=(fscanf(s));
+   data = '121;1985;1955;400;500;100;700;300;-399;8000;300;500;25;25'; %DEBUG
+   txtstring.String=data;
+   dataarray=strsplit(data,';');
+   data1=str2num(cell2mat(dataarray(1,1)));
+   data2=str2num(cell2mat(dataarray(1,2)));
+   data3=str2num(cell2mat(dataarray(1,3)));
+   data4=str2num(cell2mat(dataarray(1,4)));
+   data5=str2num(cell2mat(dataarray(1,5)));
+   data6=str2num(cell2mat(dataarray(1,6)));
+   data7=str2num(cell2mat(dataarray(1,7)));
+   data8=str2num(cell2mat(dataarray(1,8)));
+   data13=str2num(cell2mat(dataarray(1,9)));
+   data14=str2num(cell2mat(dataarray(1,10)));
+   data15=str2num(cell2mat(dataarray(1,11)));
+   data16=str2num(cell2mat(dataarray(1,12)));
+   data17=str2num(cell2mat(dataarray(1,13)));
+   data18=str2num(cell2mat(dataarray(1,14)));
+
+%   DEBUG   
+%   data1=500+500*sin(t);
+%   data2=100+100*sin(t);
+%   data3=500+500*sin(t);
+%   data4=100+100*sin(t);
+%   data5=500+500*sin(t);
+%   data6=100+100*sin(t);
+%   data7=500+500*sin(t);
+%   data8=100+100*sin(t);
+%   data13=500+500*sin(t);
+%   data14=100+100*sin(t);
+%   data15=500+500*sin(t);
+%   data16=100+100*sin(t);
+%   data17=-100;
+%   data18=-100;   
    
-   
-   
-   
-   
+   % Power Calculation %
    data9=data1*data5/1000;
    data10=data2*data6/1000;
    data11=data3*data7/1000;
    data12=data4*data8/1000;
-   if ((t/step)-500 < 0)
-          startSpot = 0;
-      else
-          startSpot = (t/step)-500;
-      end
-      
-   subplot(subplotx,subploty,1) 
+   
+   t = t + step;
    mes1=[mes1,data1];
+   mes2=[mes2,data2];
+   mes3=[mes3,data3];
+   mes4=[mes4,data4];
+   mes5=[mes5,data5];
+   mes6=[mes6,data6];
+   mes7=[mes7,data7];
+   mes8=[mes8,data8];
+   mes9=[mes9,data9];
+   mes10=[mes10,data10];
+   mes11=[mes11,data11];
+   mes12=[mes12,data12];
+   mes13=[mes13,data13];
+   mes14=[mes14,data14];
+   mes15=[mes15,data15];
+   mes16=[mes16,data16];
+   
+end
+% X-Axis Calculation %
+   if ((t/step)-10 < 0) startSpot = 0;
+   else startSpot = (t/step)-10;
+   end
+   
+   startValue=(startSpot-pan*3)/zoom;
+   endValue=(t/step+3-pan*3)/zoom;
+   
+   %Vpv1%
+   subplot(subplotx,subploty,1) 
    plot(mes1,linestyle)
-   axis([ startSpot, (t/step+50), 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 4000 ]);
    title('PV1 voltage');
    ylabel('[mV]');
    grid
    txtmes1.String=int2str(data1);
-        
+   %Vpv2%     
    subplot(subplotx,subploty,2)
-   mes2=[mes2,data2];
    plot(mes2,linestyle) ;
-   axis([ startSpot, (t/step+50), 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 4000 ]);
    title('PV2 voltage');
    ylabel('[mV]');
    grid   
    txtmes2.String=int2str(data2);
-     
+   %Vpv3%  
    subplot(subplotx,subploty,3) 
-   mes3=[mes3,data3];
+
    plot(mes3,linestyle)
-   axis([ startSpot, (t/step+50), 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 4000 ]);
    title('PV3 voltage');
    ylabel('[mV]');
    grid   
    txtmes3.String=int2str(data3);
-       
+   %Vpv4%    
    subplot(subplotx,subploty,4)
    mes4=[mes4,data4];
-   plot(mes4,linestyle) ;
-   axis([ startSpot, (t/step+50), 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 4000 ]);
    title('PV4 voltage');
    ylabel('[mV]');
    grid
    txtmes4.String=int2str(data4);
-   
+   %Ipv1%
    subplot(subplotx,subploty,5) 
-   mes5=[mes5,data5];
    plot(mes5,linestyle)
-   axis([ startSpot, (t/step+50), 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1000 ]);
    title('PV1 current');
    ylabel('[mA]');
    grid 
    txtmes5.String=int2str(data5);
-        
+   %Ipv2%     
    subplot(subplotx,subploty,6)
-   mes6=[mes6,data6];
    plot(mes6,linestyle) ;
-   axis([ startSpot, (t/step+50), 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1000 ]);
    title('PV2 current');
    ylabel('[mA]');
    grid   
    txtmes6.String=int2str(data6);
-     
+   %Ipv3%  
    subplot(subplotx,subploty,7) 
-   mes7=[mes7,data7];
    plot(mes7,linestyle)
-   axis([ startSpot, (t/step+50), 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1000 ]);
    title('PV3 current');
    ylabel('[mA]');
    grid   
    txtmes7.String=int2str(data7);
-        
+   %Ipv4%     
    subplot(subplotx,subploty,8)
-   mes8=[mes8,data8];
    plot(mes8,linestyle) ;
-   axis([ startSpot, (t/step+50), 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1000 ]);
    title('PV4 current');
    ylabel('[mA]');
    grid
    txtmes8.String=int2str(data8);
-   
+   %Ppv1%
    subplot(subplotx,subploty,9) 
-   mes9=[mes9,data9];
    plot(mes9,linestyle)
-   axis([ startSpot, (t/step+50), 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 3000 ]);
    title('PV1 power');
    ylabel('[mW]');
    grid  
    txtmes9.String=int2str(data9);
-        
+   %Ppv2%     
    subplot(subplotx,subploty,10)
-   mes10=[mes10,data10];
    plot(mes10,linestyle) ;
-   axis([ startSpot, (t/step+50), 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 3000 ]);
    title('PV2 power');
    ylabel('[mW]');
    grid 
    txtmes10.String=int2str(data10);
-     
+   %Ppv3%  
    subplot(subplotx,subploty,11) 
-   mes11=[mes11,data11];
    plot(mes11,linestyle)
-   axis([ startSpot, (t/step+50), 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 3000 ]);
    title('PV3 power');
    ylabel('[mW]');
    grid  
    txtmes11.String=int2str(data11);
-        
+   %Ppv4%     
    subplot(subplotx,subploty,12)
-   mes12=[mes12,data12];
    plot(mes12,linestyle) ;
-   axis([ startSpot, (t/step+50), 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 3000 ]);
    title('PV4 power');
    ylabel('[mW]');
    grid
    txtmes12.String=int2str(data12);
-   
+   %Ibat%
    subplot(subplotx,subploty,13) 
-   mes13=[mes13,data13];
    plot(mes13,linestyle)
-   axis([ startSpot, (t/step+50), -2000 , 2000 ]);
+   axis([ startValue, endValue, -2000 , 2000 ]);
    title('Battery current');
    ylabel('[mA]');
    grid   
    txtmes13.String=int2str(data13);
-        
+   %Vbat%     
    subplot(subplotx,subploty,14)
-   mes14=[mes14,data14];
    plot(mes14,linestyle) ;
-   axis([ startSpot, (t/step+50), 4000 , 13000 ]);
+   axis([ startValue, endValue, 4000 , 13000 ]);
    title('Battery voltage');
    ylabel('[mV]');
    grid   
    txtmes14.String=int2str(data14);
-     
+   %I3.3%  
    subplot(subplotx,subploty,15) 
-   mes15=[mes15,data15];
    plot(mes15,linestyle)
-   axis([ startSpot, (t/step+50), 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1000 ]);
    title('3.3V rail current');
    ylabel('[mA]');
    grid   
    txtmes15.String=int2str(data15);
-        
+   %I5%     
    subplot(subplotx,subploty,16)
-   mes16=[mes16,data16];
    plot(mes16,linestyle) ;
-   axis([ startSpot, (t/step+50), 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1000 ]);
    title('5V rail current');
    ylabel('[mA]');
    grid
    txtmes16.String=int2str(data16);
-      
-   
+   %Temp%   
    txtmes17.String=int2str(data17);
    txtmes18.String=int2str(data18);
-   t = t + step;
+   
    drawnow;
-end
 
+if (stop==1)
 %fclose(s);
+stop=2;
+btnstop.String='Exit'
 
+end
+end
+close(f);
+clearvars btnminus btnright btnleft btnplus btnstop data data1 data10 data11 data12 data13 data14 data15 data16 data17 data18 data2 data3 data4 data5 data6 data7 data8 data9 dataarray endValue f im linestyle mes1 mes10 mes11 mes12 mes13 mes14 mes15 mes16 mes2 mes3 mes4 mes5 mes6 mes7 mes8 mes9 pan scrsz startSpot startValue step stop subplotx subploty t text12diff text1posa text1posb1 text1posb2 text1posb3 text1posb4 txtmes1 txtmes10 txtmes11 txtmes12 txtmes13 txtmes14 txtmes15 txtmes16 txtmes17 txtmes18 txtmes2 txtmes3 txtmes4 txtmes5 txtmes6 txtmes7 txtmes8 txtmes9 txtstring txtstringtitle txttit txttit1 txttit10 txttit11 txttit12 txttit13 txttit14 txttit15 txttit16 txttit17 txttit18 txttit2 txttit3 txttit4 txttit5 txttit6 txttit7 txttit8 txttit9 x zoom
