@@ -81,6 +81,10 @@ txtmes16=uicontrol('Style','text', 'Position',[text1posa+text12diff text1posb4-6
 txtmes17=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb4-80 40 15],'String','-127');
 txtmes18=uicontrol('Style','text', 'Position',[text1posa+text12diff+10 text1posb4-100 40 15],'String','-127');
 
+im=imread('UPSat_im.png');
+axes('position',[0.01 0.1 0.1 0.1])
+imshow(im);
+
 %while ( t <interv )
 while (stop<1)
     %readasync(s);
