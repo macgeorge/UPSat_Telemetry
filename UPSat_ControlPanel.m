@@ -12,6 +12,7 @@ startValue=0;
 endValue=10;
 zoom=1;
 pan=0;
+startValuetemp=0;
 
 mes1=0;
 mes2=0;
@@ -29,6 +30,8 @@ mes13=0;
 mes14=0;
 mes15=0;
 mes16=0;
+mes17=0;
+mes18=0;
 data='';
 
 
@@ -47,8 +50,8 @@ text1posb4=190;
 text12diff=30;
 f=figure('Position',[1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/1], 'Name', 'UPSat EPS Telemetry', 'NumberTitle', 'off');
 btnstop=uicontrol('Style', 'pushbutton', 'String', 'Stop','Position', [50 20 50 20],'Callback', 'stop=stop+1;'); 
-btnplus=uicontrol('Style', 'pushbutton', 'String', '+','Position', [50 50 20 20],'Callback', 'zoom=zoom*2;'); 
-btnminus=uicontrol('Style', 'pushbutton', 'String', '-','Position', [80 50 20 20],'Callback', 'zoom=zoom/2;'); 
+btnplus=uicontrol('Style', 'pushbutton', 'String', '+','Position', [50 50 20 20],'Callback', 'zoom=zoom/2;'); 
+btnminus=uicontrol('Style', 'pushbutton', 'String', '-','Position', [80 50 20 20],'Callback', 'zoom=zoom*2;'); 
 btnleft=uicontrol('Style', 'pushbutton', 'String', '<','Position', [50 80 20 20],'Callback', 'pan=pan+1;'); 
 btnright=uicontrol('Style', 'pushbutton', 'String', '>','Position', [80 80 20 20],'Callback', 'pan=pan-1;'); 
 
@@ -96,12 +99,12 @@ im=imread('UPSat_im.png');
 axes('position',[0.005 0.15 0.1 0.1])
 imshow(im);
 
-txtstring=uicontrol('Style','text', 'Position',[400 20 600 15],'string',data);
-txtstringtitle=uicontrol('Style','text', 'Position',[550 20 50 15],'string','raw data:');
+txtstring=uicontrol('Style','text', 'Position',[600 20 600 15],'string',data, 'HorizontalAlignment', 'left');
+txtstringtitle=uicontrol('Style','text', 'Position',[550 20 50 15],'string','raw data:', 'HorizontalAlignment', 'left');
 while (stop<3)
 if (stop<1)
-   %data=(fscanf(s));
-   data = '121;1985;1955;400;500;100;700;300;-399;8000;300;500;25;25'; %DEBUG
+   %data=(fscanf(s)); %SERIAL
+   data = '1210;1985;1955;400;500;600;700;300;0;399;8000;300;500;25;25'; %DEBUG
    txtstring.String=data;
    dataarray=strsplit(data,';');
    data1=str2num(cell2mat(dataarray(1,1)));
@@ -112,28 +115,12 @@ if (stop<1)
    data6=str2num(cell2mat(dataarray(1,6)));
    data7=str2num(cell2mat(dataarray(1,7)));
    data8=str2num(cell2mat(dataarray(1,8)));
-   data13=str2num(cell2mat(dataarray(1,9)));
-   data14=str2num(cell2mat(dataarray(1,10)));
-   data15=str2num(cell2mat(dataarray(1,11)));
-   data16=str2num(cell2mat(dataarray(1,12)));
-   data17=str2num(cell2mat(dataarray(1,13)));
-   data18=str2num(cell2mat(dataarray(1,14)));
-
-%   DEBUG   
-%   data1=500+500*sin(t);
-%   data2=100+100*sin(t);
-%   data3=500+500*sin(t);
-%   data4=100+100*sin(t);
-%   data5=500+500*sin(t);
-%   data6=100+100*sin(t);
-%   data7=500+500*sin(t);
-%   data8=100+100*sin(t);
-%   data13=500+500*sin(t);
-%   data14=100+100*sin(t);
-%   data15=500+500*sin(t);
-%   data16=100+100*sin(t);
-%   data17=-100;
-%   data18=-100;   
+   data13=str2num(cell2mat(dataarray(1,9)))-str2num(cell2mat(dataarray(1,10)));
+   data14=str2num(cell2mat(dataarray(1,11)));
+   data15=str2num(cell2mat(dataarray(1,12)));
+   data16=str2num(cell2mat(dataarray(1,13)));
+   data17=str2num(cell2mat(dataarray(1,14)));
+   data18=str2num(cell2mat(dataarray(1,15))); 
    
    % Power Calculation %
    data9=data1*data5/1000;
@@ -158,6 +145,8 @@ if (stop<1)
    mes14=[mes14,data14];
    mes15=[mes15,data15];
    mes16=[mes16,data16];
+   mes17=[mes17,data17];
+   mes18=[mes18,data18];
    
 end
 % X-Axis Calculation %
@@ -165,8 +154,11 @@ end
    else startSpot = (t/step)-10;
    end
    
-   startValue=(startSpot-pan*3)/zoom;
-   endValue=(t/step+3-pan*3)/zoom;
+   startValue=(startSpot-pan*3);
+   endValue=(t/step+3-pan*3);
+   diffstartend=endValue-startValue;
+   startValuetemp=endValue-diffstartend*zoom;
+   if (startValuetemp<endValue) startValue=startValuetemp; end
    
    %Vpv1%
    subplot(subplotx,subploty,1) 
@@ -186,7 +178,6 @@ end
    txtmes2.String=int2str(data2);
    %Vpv3%  
    subplot(subplotx,subploty,3) 
-
    plot(mes3,linestyle)
    axis([ startValue, endValue, 0 , 4000 ]);
    title('PV3 voltage');
@@ -195,7 +186,7 @@ end
    txtmes3.String=int2str(data3);
    %Vpv4%    
    subplot(subplotx,subploty,4)
-   mes4=[mes4,data4];
+   plot(mes4,linestyle) ;
    axis([ startValue, endValue, 0 , 4000 ]);
    title('PV4 voltage');
    ylabel('[mV]');
@@ -304,11 +295,12 @@ end
    drawnow;
 
 if (stop==1)
-%fclose(s);
+%fclose(s); //SERIAL
 stop=2;
-btnstop.String='Exit'
+btnstop.String='Exit';
 
 end
 end
 close(f);
-clearvars btnminus btnright btnleft btnplus btnstop data data1 data10 data11 data12 data13 data14 data15 data16 data17 data18 data2 data3 data4 data5 data6 data7 data8 data9 dataarray endValue f im linestyle mes1 mes10 mes11 mes12 mes13 mes14 mes15 mes16 mes2 mes3 mes4 mes5 mes6 mes7 mes8 mes9 pan scrsz startSpot startValue step stop subplotx subploty t text12diff text1posa text1posb1 text1posb2 text1posb3 text1posb4 txtmes1 txtmes10 txtmes11 txtmes12 txtmes13 txtmes14 txtmes15 txtmes16 txtmes17 txtmes18 txtmes2 txtmes3 txtmes4 txtmes5 txtmes6 txtmes7 txtmes8 txtmes9 txtstring txtstringtitle txttit txttit1 txttit10 txttit11 txttit12 txttit13 txttit14 txttit15 txttit16 txttit17 txttit18 txttit2 txttit3 txttit4 txttit5 txttit6 txttit7 txttit8 txttit9 x zoom
+measurements=[mes1;mes2;mes3;mes4;mes5;mes6;mes7;mes8;mes9;mes10;mes11;mes12;mes13;mes14;mes15;mes16;mes17;mes18];
+clearvars btnminus btnright btnleft btnplus btnstop data data1 data10 data11 data12 data13 data14 data15 data16 data17 data18 data2 data3 data4 data5 data6 data7 data8 data9 dataarray endValue f im linestyle mes1 mes10 mes11 mes12 mes13 mes14 mes15 mes16 mes2 mes3 mes4 mes5 mes6 mes7 mes8 mes9 pan scrsz startSpot startValue step stop subplotx subploty t text12diff text1posa text1posb1 text1posb2 text1posb3 text1posb4 txtmes1 txtmes10 txtmes11 txtmes12 txtmes13 txtmes14 txtmes15 txtmes16 txtmes17 txtmes18 txtmes2 txtmes3 txtmes4 txtmes5 txtmes6 txtmes7 txtmes8 txtmes9 txtstring txtstringtitle txttit txttit1 txttit10 txttit11 txttit12 txttit13 txttit14 txttit15 txttit16 txttit17 txttit18 txttit2 txttit3 txttit4 txttit5 txttit6 txttit7 txttit8 txttit9 x zoom diffstartend startValuetemp mes17 mes18
