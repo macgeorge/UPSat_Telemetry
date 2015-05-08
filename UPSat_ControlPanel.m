@@ -1,8 +1,8 @@
 %UPSat Telemetry for EPS.
 %It displays all the measurement data on a figure and saves it an an array
 
-%Revision 1: Initial Release
-%Date: 7/5/2015
+%Revision 1.1: Initial Release
+%Date: 8/5/2015
 %Author: George Christidis
 
 %serial data format: X1;X2;X3;X4;...;X15
@@ -37,6 +37,8 @@ endValue=10; %x-axis right point
 zoom=1; %determined by buttons
 pan=0; %determined by buttons
 startValuetemp=0;
+starttime=clock;
+samples=1;
 
 %init
 mes1=0;
@@ -135,6 +137,11 @@ imshow(im);
 
 txtstring=uicontrol('Style','text', 'Position',[600 20 600 15],'string',data, 'HorizontalAlignment', 'left');
 txtstringtitle=uicontrol('Style','text', 'Position',[550 20 50 15],'string','raw data:', 'HorizontalAlignment', 'left');
+starttimetitle=uicontrol('Style','text', 'Position',[1000 40 50 15],'string','Start time:', 'HorizontalAlignment', 'left');
+starttimedata=uicontrol('Style','text', 'Position',[1050 40 650 15],'string',sprintf('%2d/%2d/%4d %2d:%02d:%02d', starttime(3), starttime(2), starttime(1), starttime(4), starttime(5), floor(starttime(6))), 'HorizontalAlignment', 'left');
+samplestitle=uicontrol('Style','text', 'Position',[1200 40 50 15],'string','Samples:', 'HorizontalAlignment', 'left');
+samplesdata=uicontrol('Style','text', 'Position',[1250 40 50 15],'string','0', 'HorizontalAlignment', 'left');
+
 while (stop<3)
 if (stop<1)
    %data=(fscanf(s)); %SERIAL
@@ -185,6 +192,8 @@ if (stop<1)
    mes16=[mes16,data16];
    mes17=[mes17,data17];
    mes18=[mes18,data18];
+   samples=samples+1;
+   samplesdata.String=int2str(samples);
    
 end
 % X-Axis Calculation %
@@ -338,10 +347,14 @@ if (stop==1)
 %fclose(s); //SERIAL
 stop=2;
 btnstop.String='Exit';
+stoptime=clock;
+stoptimetitle=uicontrol('Style','text', 'Position',[1000 20 50 15],'string','Stop time:', 'HorizontalAlignment', 'left');
+stoptimedata=uicontrol('Style','text', 'Position',[1050 20 650 15],'string',sprintf('%2d/%2d/%4d %2d:%02d:%02d', stoptime(3), stoptime(2), stoptime(1), stoptime(4), stoptime(5), floor(stoptime(6))), 'HorizontalAlignment', 'left');
+
 
 end
 end
 close(f); %close figure
 %save measurement table in workspace
 measurements=[mes1;mes2;mes3;mes4;mes5;mes6;mes7;mes8;mes9;mes10;mes11;mes12;mes131;mes132;mes13;mes14;mes15;mes16;mes17;mes18];
-clearvars btnminus btnright btnleft btnplus btnstop data data1 data10 data11 data12 data13 data14 data15 data16 data17 data18 data2 data3 data4 data5 data6 data7 data8 data9 dataarray endValue f im linestyle mes1 mes10 mes11 mes12 mes13 mes14 mes15 mes16 mes2 mes3 mes4 mes5 mes6 mes7 mes8 mes9 pan scrsz startSpot startValue step stop subplotx subploty t text12diff text1posa text1posb1 text1posb2 text1posb3 text1posb4 txtmes1 txtmes10 txtmes11 txtmes12 txtmes13 txtmes14 txtmes15 txtmes16 txtmes17 txtmes18 txtmes2 txtmes3 txtmes4 txtmes5 txtmes6 txtmes7 txtmes8 txtmes9 txtstring txtstringtitle txttit txttit1 txttit10 txttit11 txttit12 txttit13 txttit14 txttit15 txttit16 txttit17 txttit18 txttit2 txttit3 txttit4 txttit5 txttit6 txttit7 txttit8 txttit9 zoom diffstartend startValuetemp mes17 mes18 data131 data132 mes131 mes132 txtmes131 txtmes132 txttit131 txttit132
+clearvars btnminus btnright btnleft btnplus btnstop data data1 data10 data11 data12 data13 data14 data15 data16 data17 data18 data2 data3 data4 data5 data6 data7 data8 data9 dataarray endValue f im linestyle mes1 mes10 mes11 mes12 mes13 mes14 mes15 mes16 mes2 mes3 mes4 mes5 mes6 mes7 mes8 mes9 pan scrsz startSpot startValue step stop subplotx subploty t text12diff text1posa text1posb1 text1posb2 text1posb3 text1posb4 txtmes1 txtmes10 txtmes11 txtmes12 txtmes13 txtmes14 txtmes15 txtmes16 txtmes17 txtmes18 txtmes2 txtmes3 txtmes4 txtmes5 txtmes6 txtmes7 txtmes8 txtmes9 txtstring txtstringtitle txttit txttit1 txttit10 txttit11 txttit12 txttit13 txttit14 txttit15 txttit16 txttit17 txttit18 txttit2 txttit3 txttit4 txttit5 txttit6 txttit7 txttit8 txttit9 zoom diffstartend startValuetemp mes17 mes18 data131 data132 mes131 mes132 txtmes131 txtmes132 txttit131 txttit132 samples samplesdata samplestitle starttime starttimedata starttimetitle stoptime stoptimetitle stoptimedata
