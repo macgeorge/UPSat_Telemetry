@@ -148,22 +148,22 @@ if (stop<1)
    data = '1210;1985;1955;400;500;600;700;300;0;399;8000;300;500;25;25'; %DEBUG
    txtstring.String=data;
    dataarray=strsplit(data,';');
-   data1=str2num(cell2mat(dataarray(1,1)));
-   data2=str2num(cell2mat(dataarray(1,2)));
-   data3=str2num(cell2mat(dataarray(1,3)));
-   data4=str2num(cell2mat(dataarray(1,4)));
-   data5=str2num(cell2mat(dataarray(1,5)));
-   data6=str2num(cell2mat(dataarray(1,6)));
-   data7=str2num(cell2mat(dataarray(1,7)));
-   data8=str2num(cell2mat(dataarray(1,8)));
-   data131=str2num(cell2mat(dataarray(1,9)));
-   data132=str2num(cell2mat(dataarray(1,10)));
+   data1=str2double(cell2mat(dataarray(1,1)));
+   data2=str2double(cell2mat(dataarray(1,2)));
+   data3=str2double(cell2mat(dataarray(1,3)));
+   data4=str2double(cell2mat(dataarray(1,4)));
+   data5=str2double(cell2mat(dataarray(1,5)));
+   data6=str2double(cell2mat(dataarray(1,6)));
+   data7=str2double(cell2mat(dataarray(1,7)));
+   data8=str2double(cell2mat(dataarray(1,8)));
+   data131=str2double(cell2mat(dataarray(1,9)));
+   data132=str2double(cell2mat(dataarray(1,10)));
    data13=data131-data132;
-   data14=str2num(cell2mat(dataarray(1,11)));
-   data15=str2num(cell2mat(dataarray(1,12)));
-   data16=str2num(cell2mat(dataarray(1,13)));
-   data17=str2num(cell2mat(dataarray(1,14)));
-   data18=str2num(cell2mat(dataarray(1,15))); 
+   data14=str2double(cell2mat(dataarray(1,11)));
+   data15=str2double(cell2mat(dataarray(1,12)));
+   data16=str2double(cell2mat(dataarray(1,13)));
+   data17=str2double(cell2mat(dataarray(1,14)));
+   data18=str2double(cell2mat(dataarray(1,15))); 
    
    % Power Calculation %
    data9=data1*data5/1000;
