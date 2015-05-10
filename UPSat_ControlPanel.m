@@ -65,9 +65,16 @@ data='';
 
 
 %%%%%%%SERIAL CONFIG%%%%%%%%%%%
-%s=serial('/dev/tty.usbmodemfa131','baudrate', 9600, 'databits', 8, 'stopbits', 1)
-%fopen(s);
-%readasync(s);
+%s = serial('/dev/tty.usbserial-A6015RCQ');
+%s = serial('/dev/tty.usbmodemfd121');
+s = serial('/dev/cu.MACGEORGE_HC05-DevB');
+set(s,'BaudRate', 38400);
+set(s, 'InputBufferSize', 1024); %number of bytes in input buffer
+set(s, 'Timeout',15); %timeout in seconds
+fopen(s)
+fprintf(s,'Hello, MATLAB speaking\n');
+readasync(s);
+%%%%SERIAL%%%%%%%
 
 %scrsz = get(groot,'ScreenSize');
 scrsz=[1 1 1440 900];
@@ -144,8 +151,8 @@ samplesdata=uicontrol('Style','text', 'Position',[1250 40 50 15],'string','0', '
 
 while (stop<3)
 if (stop<1)
-   %data=(fscanf(s)); %SERIAL
-   data = '1210;1985;1955;400;500;600;700;300;0;399;8000;300;500;25;25'; %DEBUG
+   data=(fscanf(s)); %SERIAL
+   %data = '1210;1985;1955;400;500;600;700;300;0;399;8000;300;500;25;25'; %DEBUG
    txtstring.String=data;
    dataarray=strsplit(data,';');
    data1=str2double(cell2mat(dataarray(1,1)));
@@ -344,7 +351,7 @@ end
    drawnow;
 
 if (stop==1)
-%fclose(s); //SERIAL
+fclose(s); %SERIAL
 stop=2;
 btnstop.String='Exit';
 stoptime=clock;
