@@ -1,11 +1,11 @@
 %UPSat Telemetry for EPS.
 %It displays all the measurement data on a figure and saves it an an array
 
-%Revision 1.1: Initial Release
-%Date: 8/5/2015
+%Revision 1.2: Initial Release
+%Date: 15/5/2015
 %Author: George Christidis
 
-%serial data format: X1;X2;X3;X4;...;X15
+%serial data format: @X1;X2;X3;X4;...;X15$
 %with
 %X1: PV1 voltage, X2: PV2 voltage, X3: PV3 voltage, X4: PV4 Voltage,
 %X5: PV1 current, X6: PV2 current, X7: PV3 current, X8: PV4 current, X9:
@@ -65,15 +65,15 @@ data='';
 
 
 %%%%%%%SERIAL CONFIG%%%%%%%%%%%
-%s = serial('/dev/tty.usbserial-A6015RCQ');
+s = serial('/dev/tty.usbserial-A6015RCQ');
 %s = serial('/dev/tty.usbmodemfd121');
-s = serial('/dev/cu.MACGEORGE_HC05-DevB');
-set(s,'BaudRate', 38400);
+%s = serial('/dev/cu.MACGEORGE_HC05-DevB');
+set(s,'BaudRate', 9600);
 set(s, 'InputBufferSize', 1024); %number of bytes in input buffer
 set(s, 'Timeout',15); %timeout in seconds
 fopen(s)
-fprintf(s,'Hello, MATLAB speaking\n');
-readasync(s);
+%fprintf(s,'Hello, MATLAB speaking\n');
+
 %%%%SERIAL%%%%%%%
 
 %scrsz = get(groot,'ScreenSize');
@@ -151,10 +151,27 @@ samplesdata=uicontrol('Style','text', 'Position',[1250 40 50 15],'string','0', '
 
 while (stop<3)
 if (stop<1)
+   %pause(2);
+   
+   fprintf(s,'dbsendx');
+   readasync(s);
    data=(fscanf(s)); %SERIAL
-   %data = '1210;1985;1955;400;500;600;700;300;0;399;8000;300;500;25;25'; %DEBUG
+   
+   %data = '@1000;1000;1000;1000;100;100;100;100;100;0;8000;100;100;25;25$'; %DEBUG
+   
+   if (data(1)~='@')
+       data
+       stop=1;
+       break
+   end
+      if (data(length(data)-1)~='$')
+       data
+       stop=1;
+       break
+   end
    txtstring.String=data;
-   dataarray=strsplit(data,';');
+   data(1)='0';
+   dataarray=strsplit(data(1:length(data)-2),';');
    data1=str2double(cell2mat(dataarray(1,1)));
    data2=str2double(cell2mat(dataarray(1,2)));
    data3=str2double(cell2mat(dataarray(1,3)));
@@ -217,7 +234,7 @@ end
    %Vpv1%
    subplot(subplotx,subploty,1) 
    plot(mes1,linestyle)
-   axis([ startValue, endValue, 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 6000 ]);
    title('PV1 voltage');
    ylabel('[mV]');
    grid
@@ -225,7 +242,7 @@ end
    %Vpv2%     
    subplot(subplotx,subploty,2)
    plot(mes2,linestyle) ;
-   axis([ startValue, endValue, 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 6000 ]);
    title('PV2 voltage');
    ylabel('[mV]');
    grid   
@@ -233,7 +250,7 @@ end
    %Vpv3%  
    subplot(subplotx,subploty,3) 
    plot(mes3,linestyle)
-   axis([ startValue, endValue, 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 6000 ]);
    title('PV3 voltage');
    ylabel('[mV]');
    grid   
@@ -241,7 +258,7 @@ end
    %Vpv4%    
    subplot(subplotx,subploty,4)
    plot(mes4,linestyle) ;
-   axis([ startValue, endValue, 0 , 4000 ]);
+   axis([ startValue, endValue, 0 , 6000 ]);
    title('PV4 voltage');
    ylabel('[mV]');
    grid
@@ -249,7 +266,7 @@ end
    %Ipv1%
    subplot(subplotx,subploty,5) 
    plot(mes5,linestyle)
-   axis([ startValue, endValue, 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1500 ]);
    title('PV1 current');
    ylabel('[mA]');
    grid 
@@ -257,7 +274,7 @@ end
    %Ipv2%     
    subplot(subplotx,subploty,6)
    plot(mes6,linestyle) ;
-   axis([ startValue, endValue, 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1500 ]);
    title('PV2 current');
    ylabel('[mA]');
    grid   
@@ -265,7 +282,7 @@ end
    %Ipv3%  
    subplot(subplotx,subploty,7) 
    plot(mes7,linestyle)
-   axis([ startValue, endValue, 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1500 ]);
    title('PV3 current');
    ylabel('[mA]');
    grid   
@@ -273,7 +290,7 @@ end
    %Ipv4%     
    subplot(subplotx,subploty,8)
    plot(mes8,linestyle) ;
-   axis([ startValue, endValue, 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 1500 ]);
    title('PV4 current');
    ylabel('[mA]');
    grid
@@ -281,7 +298,7 @@ end
    %Ppv1%
    subplot(subplotx,subploty,9) 
    plot(mes9,linestyle)
-   axis([ startValue, endValue, 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 5000 ]);
    title('PV1 power');
    ylabel('[mW]');
    grid  
@@ -289,7 +306,7 @@ end
    %Ppv2%     
    subplot(subplotx,subploty,10)
    plot(mes10,linestyle) ;
-   axis([ startValue, endValue, 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 5000 ]);
    title('PV2 power');
    ylabel('[mW]');
    grid 
@@ -297,7 +314,7 @@ end
    %Ppv3%  
    subplot(subplotx,subploty,11) 
    plot(mes11,linestyle)
-   axis([ startValue, endValue, 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 5000 ]);
    title('PV3 power');
    ylabel('[mW]');
    grid  
@@ -305,7 +322,7 @@ end
    %Ppv4%     
    subplot(subplotx,subploty,12)
    plot(mes12,linestyle) ;
-   axis([ startValue, endValue, 0 , 3000 ]);
+   axis([ startValue, endValue, 0 , 5000 ]);
    title('PV4 power');
    ylabel('[mW]');
    grid
@@ -331,7 +348,7 @@ end
    %I3.3%  
    subplot(subplotx,subploty,15) 
    plot(mes15,linestyle)
-   axis([ startValue, endValue, 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 2000 ]);
    title('3.3V rail current');
    ylabel('[mA]');
    grid   
@@ -339,7 +356,7 @@ end
    %I5%     
    subplot(subplotx,subploty,16)
    plot(mes16,linestyle) ;
-   axis([ startValue, endValue, 0 , 1000 ]);
+   axis([ startValue, endValue, 0 , 2000 ]);
    title('5V rail current');
    ylabel('[mA]');
    grid
